@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+import json
+# this file is released under public domain and you can use without limitations
+
+# -------------------------------------------------------------------------
+# This is a sample controller
+# - index is the default action of any application
+# - user is required for authentication and authorization
+# - download is for downloading files uploaded in the db (does streaming)
+# -------------------------------------------------------------------------
+
+
+def index():
+    """
+    example action using the internationalization operator T and flash
+    rendered by views/default/index.html or views/generic.html
+
+    if you need a simple wiki simply replace the two lines below with:
+    return auth.wiki()
+    """
+    #response.flash = T("hello quickmeet")
+    #return dict(message=T('My first application!'))
+    #response.files('calendar.css','CalendarGenerator.js')CoordinateTracker
+
+    return locals()
+
+def user():
+    """
+    exposes:
+    http://..../[app]/default/user/login
+    http://..../[app]/default/user/logout
+    http://..../[app]/default/user/register
+    http://..../[app]/default/user/profile
+    http://..../[app]/default/user/retrieve_password
+    http://..../[app]/default/user/change_password
+    http://..../[app]/default/user/bulk_register
+    use @auth.requires_login()
+        @auth.requires_membership('group name')
+        @auth.requires_permission('read','table name',record_id)
+    to decorate functions that need access control
+    also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users
+    """
+    return dict(form=auth())
+
+def group():
+    return locals()
+    
+
+@cache.action()
+def download():
+    """
+    allows downloading of uploaded files
+    http://..../[app]/default/download/[filename]
+    """
+    return response.download(request, db)
+
+
+def call():
+    """
+    exposes services. for example:
+    http://..../[app]/default/call/jsonrpc
+    decorate with @services.jsonrpc the functions to expose
+    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
+    """
+    return service()
+
+
+#RESTFUL API
+#It does not require auth()
+@request.restful()
+def api():
+    response.view = 'generic.'+request.extension
+    
+    def GET(*args,**vars):
+        uid = args[0]
+        data = db(db.events.username == uid).select()
+        return json.dumps([{'username': r.username, 'startTime': r.startTime, 'endTime': r.endTime, 'days': r.days} for r in data])
+        #return json.dumps({'username': r.username, 'startTime': r.startTime, 'endTime': r.endTime, 'days': r.days}for r in data)
+    def POST(*args, **vars):
+        uid = args[0]
+        s = vars["dayStart"]
+        t = vars["dayEnd"]
+        duration = []
+        for i in range (int(s), int(t)+1):
+          duration.append(i)
+        db.events.insert(username =uid, startTime = vars['timeStart'], endTime = vars['timeEnd'], days = duration)
+        #db.events.insert(username =uid, startTime = vars['s'], endTime = vars['timeEnd'], days = duration)
+
+        return "success saving data!"
+
+    def PUT(table_name,record_id,**vars):
+        return db(db[table_name]._id==record_id).update(**vars)
+    def DELETE(table_name,record_id):
+        return db(db[table_name]._id==record_id).delete()
+    return dict(GET=GET, POST=POST, PUT=PUT, DELETE=DELETE)
