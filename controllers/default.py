@@ -72,24 +72,67 @@ def api():
     response.view = 'generic.'+request.extension
     
     def GET(*args,**vars):
-        uid = args[0]
-        data = db(db.events.username == uid).select()
-        return json.dumps([{'username': r.username, 'startTime': r.startTime, 'endTime': r.endTime, 'days': r.days} for r in data])
-        #return json.dumps({'username': r.username, 'startTime': r.startTime, 'endTime': r.endTime, 'days': r.days}for r in data)
+        gFlag = args[0]
+        if gFlag == "0":
+            uid = args[1]
+            data = db(db.events.username == uid).select()
+            return json.dumps([{'username': r.username, 'startTime': r.startTime, 'endTime': r.endTime, 'days': r.days} for r in data])
+
+        else:
+            interval = int(vars["timeInterval"])
+            data = []
+            result = []
+            for i in range(1, len(args)):
+                buf = db(db.events.username == args[i]).select()
+                data.extend(list(buf))
+            for j in range(0, 7):
+                temp = []
+                test = []
+                for r in data:
+                    if(j in r.days):
+                        t=[]
+                        t.append(r.startTime)
+                        t.append(r.endTime)
+                        t.append(j)
+                        temp.append(t)
+                temp.append([700,700,j])
+                temp.append([1900,1900,j])
+                temp.sort()
+#algorithm for merge interval
+                last = temp[0]
+                for i in range(1, len(temp)):
+                    curt = temp[i]
+                    if curt[0] <= last[1]:
+                        last[1] = max(last[1], curt[1])
+                        print(last)
+                    else:
+                        if (curt[0]/100 - last[1]/100)*60 + (curt[0]%100 - last[1]%100) < interval:
+                            last[1] = curt[1]
+                        else:
+                            test.append(last)
+                            last = curt
+                test.append(last)
+                result.extend(test)
+            return json.dumps([{'startTime': r[0], 'endTime': r[1], 'days': [r[2]]} for r in result])
+
+
+
     def POST(*args, **vars):
         uid = args[0]
+        dFlag = args[1]
         s = vars["dayStart"]
         t = vars["dayEnd"]
         duration = []
         for i in range (int(s), int(t)+1):
           duration.append(i)
-        db.events.insert(username =uid, startTime = vars['timeStart'], endTime = vars['timeEnd'], days = duration)
-        #db.events.insert(username =uid, startTime = vars['s'], endTime = vars['timeEnd'], days = duration)
-
-        return "success saving data!"
+        if dFlag == "1":
+            db(db.events.startTime==vars['timeStart'])(db.events.endTime==vars['timeEnd'])(db.events.days==duration).delete()
+        if dFlag == "0":
+            db.events.insert(username =uid, startTime = vars['timeStart'], endTime = vars['timeEnd'], days = duration)
+        return "store data successfully"
 
     def PUT(table_name,record_id,**vars):
         return db(db[table_name]._id==record_id).update(**vars)
     def DELETE(table_name,record_id):
-        return db(db[table_name]._id==record_id).delete()
+        return db(db[events].events.id==record_id).delete()
     return dict(GET=GET, POST=POST, PUT=PUT, DELETE=DELETE)
