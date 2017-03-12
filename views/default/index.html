@@ -7,6 +7,7 @@
     <!-- Lists days over grid-->
 
   <link rel="stylesheet" href="{{=URL('static','css/calendar.css')}}">
+  <link rel="stylesheet" href="{{=URL('static','css/switch.css')}}">
     <table class="header">
       <tr>
         <td></td>
@@ -33,18 +34,39 @@
 
     <script src ="{{=URL('static','js/BoxGenerator.js')}}">
     </script>
+    
+    <script src ="{{=URL('static','js/Undo.js')}}">
+    </script>
 
 
 
 
 
 
+<table class ="header">
+<tr>
+    <td>
 
 <form>
     <font size="4">username:</font>
 <input type="text" name="username" value="">
-
 <input type="submit" value="Submit">
 <input type="button" value="Create Group" onClick = "group()" />
+    
+
 </form>
+        </td>
+    <td>
+
+<div class="onoffswitch">
+
+    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="deleteswitch">
+    <label class="onoffswitch-label" for="deleteswitch">
+        <span class="onoffswitch-inner"></span>
+        <span class="onoffswitch-switch"></span>
+    </label>
+</div>
+</td>
+    </tr></table>
+
 <br><br><br>

@@ -37,11 +37,19 @@
 
 
       <input id="member" type="text" name="member"
-       onkeydown = "if (event.keyCode == 13) {add();event.returnValue=false;event.cancel=true;}"  >
-
+       onkeydown = "if (event.keyCode == 13) {add();event.returnValue=false;event.cancel=true;}">
       <input type="button" name="" value="add memeber" onclick="add()">
+    
+      <input id="interval" type="text" name="interval"
+       onkeydown = "if (event.keyCode == 13) {setTime();event.returnValue=false;event.cancel=true;}"/>
+      <input type="button" name="" value="set interval" onclick="setTime()">
+    
       <input type="button" value="Return" onClick = "returnEdit()" />
     </form>
+<h3 id="head"></h3>
+<table id="result" style="width:50%">
+</table>
+
 <br>
 <br>
 <br>
