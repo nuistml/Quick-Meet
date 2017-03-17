@@ -22,7 +22,7 @@ document.onkeydown = function(evt) {
         post_data("/QuickMeet/default/api/"+ user +"/1" +".json", btimeStart.pop(), btimeEnd.pop(), bdayStart.pop(), bdayEnd.pop());
         ctx.clearRect(0,0,c.width,c.height);
         drawGrid();
-        drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd);
+        drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null);
       }
       break;
   }

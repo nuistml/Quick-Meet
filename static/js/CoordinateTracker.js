@@ -50,7 +50,7 @@ get_Data("/QuickMeet/default/api/" + "0/"+ user +".json",function(data){
         bdayStart.push(jsonData[i].days[0])
         bdayEnd.push(jsonData[i].days[jsonData[i].days.length -1])
     }
-    drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd);
+    drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null);
 })
 
 
@@ -96,7 +96,7 @@ function mouseUp(eve) {
     if(deletion==true){
       findDeletion();
     }
-    drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd);
+    drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null);
 }
 
 // Tracks user's initial click
@@ -116,7 +116,7 @@ function mouseMove(eve) {
     ctx.clearRect(0,0,c.width,c.height);
     drawGrid();
     // mouse position
-    drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd);
+    drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null);
     var pos = getMousePos(canvas, eve);
 
     // do drag box
@@ -126,14 +126,14 @@ function mouseMove(eve) {
         if(endX>maxX || endY>maxY){
         	ctx.clearRect(0,0,c.width,c.height);
     		drawGrid();
-            drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd);
+            drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null);
         	maxX=endX;
         	maxY=endY;
         }
         if(endX<maxX || endY<maxY){
    	 	ctx.clearRect(0,0,c.width,c.height);
     	drawGrid();
-            drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd);
+            drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null);
         	maxX = endX;
         	maxY = endY;
 
@@ -191,7 +191,7 @@ function drawSquare() {
     var height = Math.abs(h);
                
     ctx.beginPath();
-    ctx.fillStyle = "rgba(128,0,0,1)";
+    ctx.fillStyle = "rgba(64,64,64,1)";
     ctx.fillRect(startX + offsetX, startY + offsetY, width, height);
     ctx.lineWidth = 1;
    
@@ -244,7 +244,7 @@ function findDeletion(){
             counter = counter + 1;
             ctx.clearRect(0,0,c.width,c.height);
             drawGrid();
-            drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd); 
+            drawBox(btimeStart, btimeEnd, bdayStart, bdayEnd, null); 
             console.log("Deleted");
             break;
         }
@@ -329,7 +329,7 @@ function dayMap(x){
 //link the 'CREATE GROUP' button in the main page, redirect user to group calendar
 function group(){
         var user = getParameterByName("username")
-        window.location.href = "http://127.0.0.1:8000/Quickmeet/default/group?"+"username="+user
+        window.location.href = "/QuickMeet/default/group?"+"username="+user
 }
 
 //http 'POST' method
