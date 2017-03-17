@@ -44,6 +44,9 @@ def user():
 
 def group():
     return locals()
+
+def about():
+    return locals()
     
 
 @cache.action()
@@ -104,7 +107,6 @@ def api():
                     curt = temp[i]
                     if curt[0] <= last[1]:
                         last[1] = max(last[1], curt[1])
-                        print(last)
                     else:
                         if (curt[0]/100 - last[1]/100)*60 + (curt[0]%100 - last[1]%100) < interval:
                             last[1] = curt[1]
@@ -120,16 +122,18 @@ def api():
     def POST(*args, **vars):
         uid = args[0]
         dFlag = args[1]
+        if dFlag == "2":
+            db.users.insert(username=uid, firstName=vars['firstName'])
+            return
         s = vars["dayStart"]
         t = vars["dayEnd"]
-        duration = []
+        duration = []        
         for i in range (int(s), int(t)+1):
           duration.append(i)
         if dFlag == "1":
             db(db.events.startTime==vars['timeStart'])(db.events.endTime==vars['timeEnd'])(db.events.days==duration).delete()
         if dFlag == "0":
-            db.events.insert(username =uid, startTime = vars['timeStart'], endTime = vars['timeEnd'], days = duration)
-        return "store data successfully"
+            db.events.insert(username=uid, startTime = vars['timeStart'], endTime = vars['timeEnd'], days = duration)
 
     def PUT(table_name,record_id,**vars):
         return db(db[table_name]._id==record_id).update(**vars)
